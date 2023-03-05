@@ -10,7 +10,8 @@ RoboCat::RoboCat() :
 	mHealth( 5 ),
 	mState( RC_IDLE ),
 	mTargetNetId( 0 ),
-	mTimeSinceLastAttack( kYarnCooldown )
+	mTimeSinceLastAttack( kYarnCooldown ),
+	mType( 0 )
 {
 	SetScale( 0.75f );
 	SetCollisionRadius( 0.6f );
@@ -26,6 +27,7 @@ void RoboCat::WriteForCRC( OutputMemoryBitStream& inStream )
 	inStream.Write( mHealth );
 	inStream.Write( mState );
 	inStream.Write( mTargetNetId );
+	inStream.Write( mType );
 }
 
 bool RoboCat::MoveToLocation( float inDeltaTime, const Vector3& inLocation )

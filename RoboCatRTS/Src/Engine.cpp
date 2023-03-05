@@ -46,6 +46,7 @@ bool Engine::StaticInit()
 	sInstance.reset( new Engine() );
 
  	GameObjectRegistry::sInstance->RegisterCreationFunction( 'RCAT', RoboCat::StaticCreate );
+ 	GameObjectRegistry::sInstance->RegisterCreationFunction( 'TCAT', TankRoboCat::StaticCreate );
  	GameObjectRegistry::sInstance->RegisterCreationFunction( 'YARN', Yarn::StaticCreate );
  
  	string destination = StringUtils::GetCommandLineArg( 1 );

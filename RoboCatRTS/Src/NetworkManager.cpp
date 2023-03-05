@@ -706,31 +706,32 @@ void NetworkManager::EnterPlayingState()
 	{
 		Vector3 spawnVec = spawnLocs[ indices[ i ] ];
 		//spawn 3 cats per player
-		SpawnCat( iter.first, spawnVec );
+		SpawnCat( iter.first, 'TCAT', spawnVec);
 		if ( spawnVec.mX > 0.0f )
 		{
-			SpawnCat( iter.first, Vector3( spawnVec.mX - kCatOffset, spawnVec.mY, spawnVec.mZ ) );
+			SpawnCat( iter.first, 'RCAT', Vector3(spawnVec.mX - kCatOffset, spawnVec.mY, spawnVec.mZ));
 		}
 		else
 		{
-			SpawnCat( iter.first, Vector3( spawnVec.mX + kCatOffset, spawnVec.mY, spawnVec.mZ ) );
+			SpawnCat( iter.first, 'RCAT', Vector3( spawnVec.mX + kCatOffset, spawnVec.mY, spawnVec.mZ ) );
 		}
 
 		if ( spawnVec.mY > 0.0f )
 		{
-			SpawnCat( iter.first, Vector3( spawnVec.mX, spawnVec.mY - kCatOffset, spawnVec.mZ ) );
+			SpawnCat( iter.first, 'RCAT', Vector3( spawnVec.mX, spawnVec.mY - kCatOffset, spawnVec.mZ ) );
 		}
 		else
 		{
-			SpawnCat( iter.first, Vector3( spawnVec.mX, spawnVec.mY + kCatOffset, spawnVec.mZ ) );
+			SpawnCat( iter.first, 'RCAT', Vector3( spawnVec.mX, spawnVec.mY + kCatOffset, spawnVec.mZ ) );
 		}
 		i++;
 	}
 }
 
-void NetworkManager::SpawnCat( uint32_t inPlayerId, const Vector3& inSpawnVec )
+void NetworkManager::SpawnCat( uint32_t inPlayerId, uint32_t type, const Vector3& inSpawnVec )
 {
-	RoboCatPtr cat = std::static_pointer_cast< RoboCat >( GameObjectRegistry::sInstance->CreateGameObject( 'RCAT' ) );
+	RoboCatPtr cat;
+	cat = std::static_pointer_cast<RoboCat>(GameObjectRegistry::sInstance->CreateGameObject(type));
 	cat->SetColor( ScoreBoardManager::sInstance->GetEntry( inPlayerId )->GetColor() );
 	cat->SetPlayerId( inPlayerId );
 	cat->SetLocation( Vector3( inSpawnVec.mX, inSpawnVec.mY, 0.0f ) );

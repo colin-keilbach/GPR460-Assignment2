@@ -86,6 +86,7 @@ class GameObject;
 #include "NetworkManager.h"
 
 #include "RoboCat.h"
+#include "TankRoboCat.h"
 #include "World.h"
 #include "Yarn.h"
 #include "StringUtils.h"

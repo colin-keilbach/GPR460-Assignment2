@@ -31,6 +31,9 @@ public:
 	virtual void WriteForCRC( OutputMemoryBitStream& inStream ) override;
 private:
 	Vector3				mMoveLocation;
+
+protected:
+	uint32_t mType; // this is the type of RoboCat it is (normal, tank, etc)
 	SpriteComponentPtr	mSpriteComponent;
 
 	///move down here for padding reasons...

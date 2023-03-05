@@ -17,6 +17,7 @@
     <ClInclude Include="Inc\RandGen.h" />
     <ClInclude Include="Inc\RenderManager.h" />
     <ClInclude Include="Inc\SpriteComponent.h" />
+    <ClInclude Include="Inc\TankRoboCat.h" />
     <ClInclude Include="Inc\Texture.h" />
     <ClInclude Include="Inc\TextureManager.h" />
     <ClInclude Include="Inc\TurnData.h" />
@@ -50,6 +51,7 @@
     <ClCompile Include="Src\RandGen.cpp" />
     <ClCompile Include="Src\RenderManager.cpp" />
     <ClCompile Include="Src\SpriteComponent.cpp" />
+    <ClCompile Include="Src\TankRoboCat.cpp" />
     <ClCompile Include="Src\Texture.cpp" />
     <ClCompile Include="Src\TextureManager.cpp" />
     <ClCompile Include="Src\TurnData.cpp" />
