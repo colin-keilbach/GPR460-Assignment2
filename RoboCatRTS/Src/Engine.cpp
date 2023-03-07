@@ -48,6 +48,7 @@ bool Engine::StaticInit()
  	GameObjectRegistry::sInstance->RegisterCreationFunction( 'RCAT', RoboCat::StaticCreate );
  	GameObjectRegistry::sInstance->RegisterCreationFunction( 'TCAT', TankRoboCat::StaticCreate );
  	GameObjectRegistry::sInstance->RegisterCreationFunction( 'YARN', Yarn::StaticCreate );
+ 	GameObjectRegistry::sInstance->RegisterCreationFunction( 'HS', HealthShot::StaticCreate );
  
  	string destination = StringUtils::GetCommandLineArg( 1 );
  	string name = StringUtils::GetCommandLineArg( 2 );

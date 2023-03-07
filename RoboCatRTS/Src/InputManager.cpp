@@ -9,14 +9,14 @@ void InputManager::StaticInit()
 
 void InputManager::HandleInput( EInputAction inInputAction, int inKeyCode )
 {
-	switch( inKeyCode )
+	switch (inKeyCode)
 	{
 	case '+':
 	case '=':
 		{
 			float latency = NetworkManager::sInstance->GetSimulatedLatency();
 			latency += 0.1f;
-			if( latency > 0.5f )
+			if (latency > 0.5f)
 			{
 				latency = 0.5f;
 			}
@@ -27,11 +27,19 @@ void InputManager::HandleInput( EInputAction inInputAction, int inKeyCode )
 		{
 			float latency = NetworkManager::sInstance->GetSimulatedLatency();
 			latency -= 0.1f;
-			if( latency < 0.0f )
+			if (latency < 0.0f)
 			{
 				latency = 0.0f;
 			}
 			NetworkManager::sInstance->SetSimulatedLatency( latency );
+			break;
+		}
+	case 'b':
+		{
+			if (mSelectedNetId > 0)
+			{
+				mCommandList.AddCommand( CreateCommand::StaticCreate( mSelectedNetId, 'RCAT' ) );
+			}
 			break;
 		}
 	case SDLK_RETURN:
@@ -49,7 +57,7 @@ void InputManager::HandleMouseClick( int32_t inX, int32_t inY, uint8_t button )
 {
 	float worldX = inX / kWorldZoomFactor - kWorldWidth / 2.0f;
 	float worldY = inY / kWorldZoomFactor - kWorldHeight / 2.0f;
-	switch( button )
+	switch (button)
 	{
 	case SDL_BUTTON_LEFT:
 		mSelectedNetId = World::sInstance->TrySelectGameObject( Vector3( worldX, worldY, 0.0f ) );
@@ -64,24 +72,28 @@ void InputManager::HandleMouseClick( int32_t inX, int32_t inY, uint8_t button )
 
 void InputManager::GenerateRightClickCommand( const Vector3& inWorldPos )
 {
-	if ( mSelectedNetId > 0 )
+	if (mSelectedNetId > 0)
 	{
 		//need to figure out if this is an attack or a moveto command
 		uint32_t targetId = World::sInstance->TrySelectGameObject( inWorldPos );
 
 		CommandPtr cmd;
-		if ( targetId > 0 )
+		if (targetId > 0)
 		{
 			cmd = AttackCommand::StaticCreate( mSelectedNetId, targetId );
+
+			// try to make heal command if attack fails
+			if(!cmd)
+				cmd = HealCommand::StaticCreate( mSelectedNetId, targetId );
 		}
 
 		//fallback in case the attack command was invalid
-		if ( !cmd )
+		if (!cmd)
 		{
 			cmd = MoveCommand::StaticCreate( mSelectedNetId, inWorldPos );
 		}
 
-		if ( cmd )
+		if (cmd)
 		{
 			mCommandList.AddCommand( cmd );
 		}
@@ -89,7 +101,7 @@ void InputManager::GenerateRightClickCommand( const Vector3& inWorldPos )
 }
 
 InputManager::InputManager() :
-mSelectedNetId( 0 )
+	mSelectedNetId( 0 )
 {
 
 }

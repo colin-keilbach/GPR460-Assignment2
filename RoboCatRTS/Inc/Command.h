@@ -5,7 +5,8 @@ public:
 	{
 		CM_INVALID,
 		CM_ATTACK,
-		CM_MOVE
+		CM_MOVE,
+		CM_CREATE
 	};
 
 	Command() :
@@ -35,6 +36,8 @@ protected:
 
 typedef shared_ptr< Command >	CommandPtr;
 
+#pragma region Attack Command
+
 class AttackCommand : public Command
 {
 public:
@@ -58,6 +61,10 @@ protected:
 
 typedef shared_ptr< AttackCommand > AttackCommandPtr;
 
+#pragma endregion
+
+#pragma region Move Command
+
 class MoveCommand : public Command
 {
 public:
@@ -79,3 +86,58 @@ protected:
 };
 
 typedef shared_ptr< MoveCommand > MoveCommandPtr;
+
+#pragma endregion
+
+#pragma region Create Command
+
+class CreateCommand : public Command
+{
+public:
+	CreateCommand()
+	{
+		mCommandType = CM_CREATE;
+	}
+
+	static shared_ptr< CreateCommand > StaticCreate(uint32_t inNetworkId, uint32_t inType);
+
+	virtual void Write(OutputMemoryBitStream& inOutputStream) override;
+
+	virtual void ProcessCommand() override;
+
+protected:
+	virtual void Read(InputMemoryBitStream& inInputStream) override;
+
+	uint32_t mType;
+};
+
+typedef shared_ptr< CreateCommand > CreateCommandPtr;
+
+#pragma endregion
+
+#pragma region Heal Command
+
+class HealCommand : public Command
+{
+public:
+	HealCommand() :
+		mTargetNetId( 0 )
+	{
+		mCommandType = CM_ATTACK;
+	}
+
+	static shared_ptr< HealCommand > StaticCreate( uint32_t inMyNetId, uint32_t inTargetNetId );
+
+	virtual void Write( OutputMemoryBitStream& inOutputStream ) override;
+
+	virtual void ProcessCommand() override;
+
+protected:
+	virtual void Read( InputMemoryBitStream& inInputStream ) override;
+
+	uint32_t mTargetNetId;
+};
+
+typedef shared_ptr< HealCommand > HealCommandPtr;
+
+#pragma endregion

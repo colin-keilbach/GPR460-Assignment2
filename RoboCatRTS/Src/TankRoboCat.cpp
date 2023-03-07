@@ -7,6 +7,7 @@ const float kYarnCooldown = 1.0f;
 TankRoboCat::TankRoboCat() :
 	RoboCat()
 {
+	mMaxHealth = 10;
 	mHealth = 10;
 	mState = RC_IDLE;
 	mTargetNetId = 0;

@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Inc\GraphicsDriver.h" />
+    <ClInclude Include="Inc\HealthShot.h" />
     <ClInclude Include="Inc\HUD.h" />
     <ClInclude Include="Inc\InputManager.h" />
     <ClInclude Include="Inc\RandGen.h" />
@@ -45,6 +46,7 @@
     <ClInclude Include="Inc\WeightedTimedMovingAverage.h" />
     <ClInclude Include="Inc\World.h" />
     <ClCompile Include="Src\GraphicsDriver.cpp" />
+    <ClCompile Include="Src\HealthShot.cpp" />
     <ClCompile Include="Src\HUD.cpp" />
     <ClCompile Include="Src\InputManager.cpp" />
     <ClCompile Include="Src\Main.cpp" />

@@ -89,6 +89,7 @@ class GameObject;
 #include "TankRoboCat.h"
 #include "World.h"
 #include "Yarn.h"
+#include "HealthShot.h"
 #include "StringUtils.h"
 #include "ScoreBoardManager.h"
 

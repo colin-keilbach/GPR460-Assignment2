@@ -9,18 +9,18 @@ void GameObjectRegistry::StaticInit()
 }
 
 GameObjectRegistry::GameObjectRegistry()
-{
-}
+{}
 
 void GameObjectRegistry::RegisterCreationFunction( uint32_t inFourCCName, GameObjectCreationFunc inCreationFunction )
 {
-	mNameToGameObjectCreationFunctionMap[ inFourCCName ] = inCreationFunction;
+	mNameToGameObjectCreationFunctionMap[inFourCCName] = inCreationFunction;
 }
 
 GameObjectPtr GameObjectRegistry::CreateGameObject( uint32_t inFourCCName )
 {
 	//no error checking- if the name isn't there, exception!
-	GameObjectCreationFunc creationFunc = mNameToGameObjectCreationFunctionMap[ inFourCCName ];
+	LOG( "inFourCCName: %d", inFourCCName);
+	GameObjectCreationFunc creationFunc = mNameToGameObjectCreationFunctionMap[inFourCCName];
 
 	GameObjectPtr gameObject = creationFunc();
 
