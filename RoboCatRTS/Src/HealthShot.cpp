@@ -9,7 +9,7 @@ HealthShot::HealthShot() :
 	SetScale( GetScale() * 0.25f );
 	SetCollisionRadius( 0.125f );
 	mSpriteComponent = std::make_shared<SpriteComponent>( this );
-	mSpriteComponent->SetTexture( TextureManager::sInstance->GetTexture( "yarn" ) );
+	mSpriteComponent->SetTexture( TextureManager::sInstance->GetTexture( "healthshot" ) );
 }
 
 void HealthShot::InitFromShooter( GameObjectPtr inShooter, GameObjectPtr inTarget )

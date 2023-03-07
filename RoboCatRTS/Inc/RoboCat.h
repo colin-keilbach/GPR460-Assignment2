@@ -9,7 +9,8 @@ public:
 		RC_MOVING,
 		RC_ATTACK,
 		RC_BUILD,
-		RC_HEAL
+		RC_HEAL,
+		RC_MEOW
 	};
 
 	static	GameObjectPtr StaticCreate() { return NetworkManager::sInstance->RegisterAndReturn( new RoboCat() ); }
@@ -22,6 +23,7 @@ public:
 	void UpdateAttackState( float inDeltaTime );
 	void UpdateBuildState( float inDeltaTime );
 	void UpdateHealState( float inDeltaTime );
+	void UpdateMeowState( float inDeltaTime );
 	// returns true if the move is done
 	bool MoveToLocation( float inDeltaTime, const Vector3& inLocation );
 	void UpdateRotation( const Vector3& inTarget );
@@ -29,6 +31,7 @@ public:
 	void EnterAttackState( uint32_t inTargetNetId );
 	void EnterBuildState( uint32_t inType );
 	void EnterHealState( uint32_t inTargetNetId );
+	void EnterMeowState();
 	void TakeDamage( int inDmgAmount );
 	bool IsFullHealth() { return mHealth >= mMaxHealth; }
 	virtual void HandleDying() override;
@@ -56,6 +59,9 @@ protected:
 	// build information
 	uint32_t			mBuildType;
 	float			mBuildTime;
+
+	// meow information
+	float mMeowTime;
 };
 
 typedef shared_ptr< RoboCat >	RoboCatPtr;

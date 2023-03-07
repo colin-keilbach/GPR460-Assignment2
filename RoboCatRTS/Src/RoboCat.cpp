@@ -6,6 +6,7 @@ const float kAttackRangeSq = 1.5f * 1.5f;
 const float kBuildRangeSq = 0.5f * 0.5f;
 const float kYarnCooldown = 1.0f;
 const float kHealthShotCooldown = 2.0f;
+const float kMeowTimer = 1.0f;
 const float kBuildTimer = 3.0f;
 
 RoboCat::RoboCat() :
@@ -76,6 +77,22 @@ void RoboCat::UpdateRotation( const Vector3& inTarget )
 	SetRotation( angle );
 }
 
+void RoboCat::TakeDamage( int inDmgAmount )
+{
+	mHealth -= inDmgAmount;
+	if (mHealth <= 0)
+	{
+		SetDoesWantToDie( true );
+	}
+	if (mHealth > mMaxHealth) mHealth = mMaxHealth;
+}
+
+void RoboCat::HandleDying()
+{
+	GameObject::HandleDying();
+	ScoreBoardManager::sInstance->IncScore( mPlayerId, -1 );
+}
+
 #pragma region Enter States
 
 void RoboCat::EnterMovingState( const Vector3& inTarget )
@@ -130,23 +147,13 @@ void RoboCat::EnterHealState( uint32_t inTargetNetId )
 	}
 }
 
+void RoboCat::EnterMeowState()
+{
+	mMeowTime = 0;
+	mState = RC_MEOW;
+}
+
 #pragma endregion
-
-void RoboCat::TakeDamage( int inDmgAmount )
-{
-	mHealth -= inDmgAmount;
-	if (mHealth <= 0)
-	{
-		SetDoesWantToDie( true );
-	}
-	if (mHealth > mMaxHealth) mHealth = mMaxHealth;
-}
-
-void RoboCat::HandleDying()
-{
-	GameObject::HandleDying();
-	ScoreBoardManager::sInstance->IncScore( mPlayerId, -1 );
-}
 
 #pragma region Update States
 
@@ -168,6 +175,9 @@ void RoboCat::Update( float inDeltaTime )
 		break;
 	case RC_HEAL:
 		UpdateHealState( inDeltaTime );
+		break;
+	case RC_MEOW:
+		UpdateMeowState( inDeltaTime );
 		break;
 	}
 }
@@ -249,23 +259,17 @@ void RoboCat::UpdateHealState( float inDeltaTime )
 		//if we're in yarn cooldown, we aren't allowed to do anything
 		if (mTimeSinceLastAttack >= kHealthShotCooldown)
 		{
-			LOG( "Healing cooldown is up" );
 			UpdateRotation( mTargetCat->GetLocation() );
 			if (distSq <= kAttackRangeSq)
 			{
-				LOG( "Healing in range" );
 				//if we're in range, throw a ball of yarn
 				mTimeSinceLastAttack = 0.0f;
 				GameObjectPtr me = NetworkManager::sInstance->GetGameObject( mNetworkId );
-				LOG( "Healing" );
 				HealthShotPtr healthshot = std::static_pointer_cast<HealthShot>( GameObjectRegistry::sInstance->CreateGameObject( 'HS' ) );
-				LOG( "Healing created" );
 				healthshot->InitFromShooter( me, mTargetCat );
-				LOG( "Healing fired" );
 			}
 			else
 			{
-				LOG( "Healing out of range" );
 				MoveToLocation( inDeltaTime, mTargetCat->GetLocation() );
 			}
 		}
@@ -274,6 +278,21 @@ void RoboCat::UpdateHealState( float inDeltaTime )
 	{
 		//target cat is dead or at full health
 		mTargetCat.reset();
+		mState = RC_IDLE;
+	}
+}
+
+
+void RoboCat::UpdateMeowState( float inDeltaTime )
+{
+	mMeowTime += inDeltaTime;
+
+	Vector3 pos = mLocation;
+	// move to render
+	HUD::sInstance->RenderText( "MEOW", pos, Vector3::Zero );
+
+	if (mMeowTime >= kMeowTimer)
+	{
 		mState = RC_IDLE;
 	}
 }

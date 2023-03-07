@@ -38,7 +38,19 @@ void InputManager::HandleInput( EInputAction inInputAction, int inKeyCode )
 		{
 			if (mSelectedNetId > 0)
 			{
-				mCommandList.AddCommand( CreateCommand::StaticCreate( mSelectedNetId, 'RCAT' ) );
+				CommandPtr cmd = CreateCommand::StaticCreate( mSelectedNetId, 'RCAT' );
+				if (cmd)
+					mCommandList.AddCommand( cmd );
+			}
+			break;
+		}
+	case 'm':
+		{
+			if (mSelectedNetId > 0)
+			{
+				CommandPtr cmd = MeowCommand::StaticCreate( mSelectedNetId );
+				if (cmd)
+					mCommandList.AddCommand( cmd );
 			}
 			break;
 		}
@@ -83,7 +95,7 @@ void InputManager::GenerateRightClickCommand( const Vector3& inWorldPos )
 			cmd = AttackCommand::StaticCreate( mSelectedNetId, targetId );
 
 			// try to make heal command if attack fails
-			if(!cmd)
+			if (!cmd)
 				cmd = HealCommand::StaticCreate( mSelectedNetId, targetId );
 		}
 

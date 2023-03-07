@@ -13,6 +13,8 @@ public:
 
 	void			SetPlayerHealth( int inHealth )	{ mHealth = inHealth; }
 
+	void	RenderText( const string& inStr, const Vector3& origin, const Vector3& inColor );
+
 private:
 
 	HUD();
@@ -22,7 +24,6 @@ private:
 	void	RenderScoreBoard();
 	void	RenderHealth();
 	void	RenderCountdown();
-	void	RenderText( const string& inStr, const Vector3& origin, const Vector3& inColor );
 
 	Vector3										mBandwidthOrigin;
 	Vector3										mRoundTripTimeOrigin;

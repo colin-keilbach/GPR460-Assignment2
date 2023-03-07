@@ -6,7 +6,9 @@ public:
 		CM_INVALID,
 		CM_ATTACK,
 		CM_MOVE,
-		CM_CREATE
+		CM_CREATE,
+		CM_HEAL,
+		CM_MEOW
 	};
 
 	Command() :
@@ -123,7 +125,7 @@ public:
 	HealCommand() :
 		mTargetNetId( 0 )
 	{
-		mCommandType = CM_ATTACK;
+		mCommandType = CM_HEAL;
 	}
 
 	static shared_ptr< HealCommand > StaticCreate( uint32_t inMyNetId, uint32_t inTargetNetId );
@@ -139,5 +141,29 @@ protected:
 };
 
 typedef shared_ptr< HealCommand > HealCommandPtr;
+
+#pragma endregion
+
+#pragma region Meow Command
+
+class MeowCommand : public Command
+{
+public:
+	MeowCommand()
+	{
+		mCommandType = CM_MEOW;
+	}
+
+	static shared_ptr< MeowCommand > StaticCreate( uint32_t inMyNetId );
+
+	virtual void Write( OutputMemoryBitStream& inOutputStream ) override;
+
+	virtual void ProcessCommand() override;
+
+protected:
+	virtual void Read( InputMemoryBitStream& inInputStream ) override;
+};
+
+typedef shared_ptr< MeowCommand > MeowCommandPtr;
 
 #pragma endregion

@@ -31,6 +31,18 @@ shared_ptr< Command > Command::StaticReadAndCreate( InputMemoryBitStream& inInpu
 		retVal->mPlayerId = playerId;
 		retVal->Read( inInputStream );
 		break;
+	case CM_HEAL:
+		retVal = std::make_shared< HealCommand >();
+		retVal->mNetworkId = networkId;
+		retVal->mPlayerId = playerId;
+		retVal->Read( inInputStream );
+		break;
+	case CM_MEOW:
+		retVal = std::make_shared< MeowCommand >();
+		retVal->mNetworkId = networkId;
+		retVal->mPlayerId = playerId;
+		retVal->Read( inInputStream );
+		break;
 	default:
 		LOG( "Read in an unknown command type??" );
 		break;
@@ -163,6 +175,11 @@ void CreateCommand::Write( OutputMemoryBitStream& inOutputStream )
 	inOutputStream.Write( mType );
 }
 
+void CreateCommand::Read( InputMemoryBitStream& inInputStream )
+{
+	inInputStream.Read( mType );
+}
+
 void CreateCommand::ProcessCommand()
 {
 	GameObjectPtr obj = NetworkManager::sInstance->GetGameObject( mNetworkId );
@@ -172,11 +189,6 @@ void CreateCommand::ProcessCommand()
 		RoboCat* rc = obj->GetAsCat();
 		rc->EnterBuildState( mType );
 	}
-}
-
-void CreateCommand::Read( InputMemoryBitStream& inInputStream )
-{
-	inInputStream.Read( mType );
 }
 
 #pragma endregion
@@ -223,6 +235,47 @@ void HealCommand::ProcessCommand()
 	{
 		RoboCat* rc = obj->GetAsCat();
 		rc->EnterHealState( mTargetNetId );
+	}
+}
+
+#pragma endregion
+
+#pragma region Meow Command
+
+MeowCommandPtr MeowCommand::StaticCreate( uint32_t inMyNetId )
+{
+	MeowCommandPtr retVal;
+	GameObjectPtr me = NetworkManager::sInstance->GetGameObject( inMyNetId );
+	uint32_t playerId = NetworkManager::sInstance->GetMyPlayerId();
+	//can only issue commands to this unit if I own it, and it's a cat,
+	//and if the target is a cat that's on a different team
+	if (me && ( me->GetClassId() == RoboCat::kClassId || me->GetClassId() == TankRoboCat::kClassId ) &&
+		 me->GetPlayerId() == playerId)
+	{
+		retVal = std::make_shared< MeowCommand >();
+		retVal->mNetworkId = inMyNetId;
+		retVal->mPlayerId = playerId;
+	}
+	return retVal;
+}
+
+void MeowCommand::Write( OutputMemoryBitStream& inOutputStream )
+{
+	Command::Write( inOutputStream );
+}
+
+void MeowCommand::Read( InputMemoryBitStream& inInputStream )
+{
+}
+
+void MeowCommand::ProcessCommand()
+{
+	GameObjectPtr obj = NetworkManager::sInstance->GetGameObject( mNetworkId );
+	if (obj && (obj->GetClassId() == RoboCat::kClassId || obj->GetClassId() == TankRoboCat::kClassId) &&
+		 obj->GetPlayerId() == mPlayerId)
+	{
+		RoboCat* rc = obj->GetAsCat();
+		rc->EnterMeowState();
 	}
 }
 
