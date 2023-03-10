@@ -2,6 +2,14 @@
 
 #include <SDL_ttf.h>
 
+struct TextRenderer
+{
+	string mText;
+	Vector3 mPosition;
+	Vector3 mColor;
+	float mTime;
+};
+
 class HUD
 {
 public:
@@ -13,7 +21,8 @@ public:
 
 	void			SetPlayerHealth( int inHealth )	{ mHealth = inHealth; }
 
-	void	RenderText( const string& inStr, const Vector3& origin, const Vector3& inColor );
+	void			AddTextRenderer( const string& inStr, const Vector3& origin, const Vector3& inColor, int inTime = 60 );
+
 
 private:
 
@@ -24,6 +33,9 @@ private:
 	void	RenderScoreBoard();
 	void	RenderHealth();
 	void	RenderCountdown();
+	void	RenderTextList();
+
+	void	RenderText( const string& inStr, const Vector3& origin, const Vector3& inColor );
 
 	Vector3										mBandwidthOrigin;
 	Vector3										mRoundTripTimeOrigin;
@@ -33,7 +45,8 @@ private:
 	Vector3										mTimeOrigin;
 	SDL_Rect									mViewTransform;
 
+	std::vector<TextRenderer> mTextList;
+
 	TTF_Font*									mFont;
 	int											mHealth;
 };
-

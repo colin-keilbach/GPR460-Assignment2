@@ -4,17 +4,17 @@ std::unique_ptr< HUD >	HUD::sInstance = nullptr;
 
 
 HUD::HUD() :
-mScoreBoardOrigin( 30.f, 60.f, 0.0f ),
-mBandwidthOrigin( 30.f, 10.f, 0.0f ),
-mRoundTripTimeOrigin( 50.f, 10.f, 0.0f ),
-mScoreOffset( 0.f, 50.f, 0.0f ),
-mHealthOffset( 1000, 10.f, 0.0f ),
-mTimeOrigin( 500.0f, 320.0f, 0.0f ),
-mHealth( 0 )
+	mScoreBoardOrigin( 30.f, 60.f, 0.0f ),
+	mBandwidthOrigin( 30.f, 10.f, 0.0f ),
+	mRoundTripTimeOrigin( 50.f, 10.f, 0.0f ),
+	mScoreOffset( 0.f, 50.f, 0.0f ),
+	mHealthOffset( 1000, 10.f, 0.0f ),
+	mTimeOrigin( 500.0f, 320.0f, 0.0f ),
+	mHealth( 0 )
 {
 	TTF_Init();
 	mFont = TTF_OpenFont( "../Assets/Carlito-Regular.TTF", 36 );
-	if( mFont == nullptr )
+	if (mFont == nullptr)
 	{
 		SDL_LogError( SDL_LOG_CATEGORY_ERROR, "Failed to load font." );
 	}
@@ -24,7 +24,7 @@ mHealth( 0 )
 void HUD::RenderTurnNumber()
 {
 	string str = StringUtils::Sprintf( "Turn %d:%d", NetworkManager::sInstance->GetTurnNumber(),
-		NetworkManager::sInstance->GetSubTurnNumber() );
+									   NetworkManager::sInstance->GetSubTurnNumber() );
 	RenderText( str, mBandwidthOrigin, Colors::Blue );
 }
 
@@ -40,11 +40,12 @@ void HUD::Render()
 	RenderScoreBoard();
 	RenderHealth();
 	RenderCountdown();
+	RenderTextList();
 }
 
 void HUD::RenderHealth()
 {
-	if( mHealth > 0 )
+	if (mHealth > 0)
 	{
 		string healthString = StringUtils::Sprintf( "Health %d", mHealth );
 		RenderText( healthString, mHealthOffset, Colors::Red );
@@ -55,12 +56,12 @@ void HUD::RenderCountdown()
 {
 	NetworkManager::NetworkManagerState state = NetworkManager::sInstance->GetState();
 
-	switch ( state )
+	switch (state)
 	{
 	case NetworkManager::NMS_Starting:
 		{
 			float timeToStart = NetworkManager::sInstance->GetTimeToStart();
-			if ( timeToStart > 0.0f )
+			if (timeToStart > 0.0f)
 			{
 				string timeStr = StringUtils::Sprintf( "STARTING IN %.2f", timeToStart );
 				RenderText( timeStr, mTimeOrigin, Colors::Red );
@@ -84,8 +85,8 @@ void HUD::RenderCountdown()
 void HUD::RenderBandWidth()
 {
 	string bandwidth = StringUtils::Sprintf( "In %d  Bps, Out %d Bps",
-												static_cast< int >( NetworkManager::sInstance->GetBytesReceivedPerSecond().GetValue() ),
-												static_cast< int >( NetworkManager::sInstance->GetBytesSentPerSecond().GetValue() ) );
+											 static_cast<int>( NetworkManager::sInstance->GetBytesReceivedPerSecond().GetValue() ),
+											 static_cast<int>( NetworkManager::sInstance->GetBytesSentPerSecond().GetValue() ) );
 	RenderText( bandwidth, mBandwidthOrigin, Colors::White );
 }
 
@@ -93,8 +94,8 @@ void HUD::RenderScoreBoard()
 {
 	const vector< ScoreBoardManager::Entry >& entries = ScoreBoardManager::sInstance->GetEntries();
 	Vector3 offset = mScoreBoardOrigin;
-	
-	for( const auto& entry: entries )
+
+	for (const auto& entry : entries)
 	{
 		RenderText( entry.GetFormattedNameScore(), offset, entry.GetColor() );
 		offset.mX += mScoreOffset.mX;
@@ -128,4 +129,34 @@ void HUD::RenderText( const string& inStr, const Vector3& origin, const Vector3&
 	// Destroy the surface/texture
 	SDL_DestroyTexture( texture );
 	SDL_FreeSurface( surface );
+}
+
+void HUD::AddTextRenderer( const string& inStr, const Vector3& origin, const Vector3& inColor, int inTime )
+{
+	TextRenderer tr;
+	tr.mText = inStr;
+	tr.mPosition = origin;
+	tr.mColor = inColor;
+	tr.mTime = inTime;
+
+	mTextList.emplace_back( tr );
+}
+
+
+void HUD::RenderTextList()
+{
+	int i = 0;
+	for (TextRenderer& t : mTextList)
+	{
+		RenderText( t.mText, t.mPosition, t.mColor );
+		t.mTime--;
+		if (t.mTime <= 0)
+		{
+			mTextList.erase( mTextList.begin() + i );
+			LOG( "delete " + i );
+			continue;
+		}
+
+		i++;
+	}
 }

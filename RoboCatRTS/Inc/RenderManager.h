@@ -15,6 +15,8 @@ public:
 	void RemoveComponent( SpriteComponent* inComponent );
 	int	 GetComponentIndex( SpriteComponent* inComponent ) const;
 
+	SDL_Rect GetViewTransform() { return mViewTransform; };
+
 private:
 
 	RenderManager();

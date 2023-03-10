@@ -288,13 +288,15 @@ void RoboCat::UpdateMeowState( float inDeltaTime )
 	mMeowTime += inDeltaTime;
 
 	Vector3 pos = mLocation;
+	SDL_Rect tranform = RenderManager::sInstance->GetViewTransform();
+	pos.mX *= tranform.w;
+	pos.mY *= tranform.h;
+	pos.mX += tranform.x;
+	pos.mY += tranform.y;
 	// move to render
-	HUD::sInstance->RenderText( "MEOW", pos, Vector3::Zero );
+	HUD::sInstance->AddTextRenderer( "MEOW", pos, Vector3::Zero, 7 );
 
-	if (mMeowTime >= kMeowTimer)
-	{
-		mState = RC_IDLE;
-	}
+	mState = RC_IDLE;
 }
 
 #pragma endregion
